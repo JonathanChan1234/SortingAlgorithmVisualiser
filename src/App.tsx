@@ -8,6 +8,7 @@ import { generateRandomArray } from './utils/utils';
 import { DEFAULT_NUMBER_OF_ELEMENT } from './utils/constants';
 import { insertionSortByIndex } from './sorting/insertionSort';
 import { selectionSortByIndex } from './sorting/selectionSort';
+import mergeSortHelper from './sorting/mergeSort';
 
 const App: React.FC = () => {
     const [sortingMethod, setSortingMethod] = useState("insertion");
@@ -44,11 +45,27 @@ const App: React.FC = () => {
                 await selectionSort();
                 break;
             case "merge":
+                await mergeSort();
                 break;
             default:
                 break;
         }
         setSortInProgress(false);
+    };
+
+    const mergeSort = async () => {
+        const {sortedArr, immediateResult} = mergeSortHelper([...sortElements]);
+        const sortingAnimation = (step: number, arr: number[][]) : Promise<number[]> => {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    setSortElements(arr[step]);
+                    resolve();
+                });
+            });
+        };
+        for (let i = 0; i < immediateResult.length; ++i) {
+            await sortingAnimation(i, immediateResult);
+        }
     };
 
     const insertionSort = async () => {
@@ -61,7 +78,6 @@ const App: React.FC = () => {
                 }, 10);
             });
         };
-        setSortInProgress(true);
         let arr = [...sortElements];
         for (let i = 1; i < numberOfElement; ++i) {
             arr = await insertionSortIteration(i, arr);
