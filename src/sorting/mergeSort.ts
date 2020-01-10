@@ -1,11 +1,15 @@
-const mergeSortHelper = (arr: Array<number>) => {
+const mergeSortHelper = (arr: number[]) => {
     const sortedArr = [...arr];
-    const immediateResult: Array<Array<number>> = [[]];
+    const immediateResult: number[][] = [];
     mergeSort(0, sortedArr.length - 1, sortedArr, immediateResult);
-    return {sortedArr: sortedArr, immediateResult: immediateResult};
+    return { sortedArr: sortedArr, immediateResult: immediateResult };
 };
 
-const mergeSort = (low: number, high: number, arr: Array<number>, immediateResult: Array<Array<number>>) => {
+const mergeSort = (
+    low: number,
+    high: number,
+    arr: Array<number>,
+    immediateResult: number[][]) => {
     if (low < high) {
         const middle = low + Math.floor((high - low) / 2);
         mergeSort(low, middle, arr, immediateResult);
@@ -14,7 +18,12 @@ const mergeSort = (low: number, high: number, arr: Array<number>, immediateResul
     }
 };
 
-const merge = (low: number, middle: number, high: number, arr: Array<number>, immediateResult: Array<Array<number>>) => {
+const merge = (
+    low: number,
+    middle: number,
+    high: number,
+    arr: number[],
+    immediateResult: number[][]) => {
     let i = low;
     let j = middle + 1;
     let k = low;
@@ -27,21 +36,22 @@ const merge = (low: number, middle: number, high: number, arr: Array<number>, im
             arr[k] = helperArray[j];
             j++;
         }
+        immediateResult.push([...arr]);
         k++;
     }
     while (i <= middle) {
         arr[k] = helperArray[i];
+        immediateResult.push([...arr]);
         i++;
         k++;
     }
     while (j <= high) {
         arr[k] = helperArray[j];
+        immediateResult.push([...arr]);
         j++;
         k++;
     }
     immediateResult.push([...arr]);
 };
-// mergeSort(0, 6)
-// console.log(immediateResult);
 
 export default mergeSortHelper;

@@ -2,13 +2,20 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { AppBar, Toolbar, Typography, Button, Box } from '@material-ui/core';
 
+// UI Components
 import SortingOption from './components/SortingOption';
 import SortingBar from './components/SortingBar';
+
+// Sorting Algorithm Helper Module
+import insertionSortHelper from './sorting/insertionSort';
+import selectionSortHelper from './sorting/selectionSort';
+import mergeSortHelper from './sorting/mergeSort';
+
+// Constants and Utils
 import { generateRandomArray } from './utils/utils';
 import { DEFAULT_NUMBER_OF_ELEMENT } from './utils/constants';
-import { insertionSortByIndex } from './sorting/insertionSort';
-import { selectionSortByIndex } from './sorting/selectionSort';
-import mergeSortHelper from './sorting/mergeSort';
+import quickSortHelper from './sorting/quickSort';
+import bubbleSortHelper from './sorting/bubbleSort';
 
 const App: React.FC = () => {
     const [sortingMethod, setSortingMethod] = useState("insertion");
@@ -37,67 +44,39 @@ const App: React.FC = () => {
 
     const sort = async () => {
         setSortInProgress(true);
+        let immediateResult: number[][] = [[]];
         switch (sortingMethod) {
             case "insertion":
-                await insertionSort();
+                immediateResult = insertionSortHelper(sortElements).immediateResult;
                 break;
             case "selection":
-                await selectionSort();
+                immediateResult = selectionSortHelper(sortElements).immediateResult;
                 break;
             case "merge":
-                await mergeSort();
+                immediateResult = mergeSortHelper(sortElements).immediateResult;
+                break;
+            case "quick":
+                immediateResult = quickSortHelper(sortElements).immediateResult;
+                break;
+            case "bubble":
+                immediateResult = bubbleSortHelper(sortElements).immediateResult;
                 break;
             default:
                 break;
         }
-        setSortInProgress(false);
-    };
-
-    const mergeSort = async () => {
-        const {sortedArr, immediateResult} = mergeSortHelper([...sortElements]);
-        const sortingAnimation = (step: number, arr: number[][]) : Promise<number[]> => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    setSortElements(arr[step]);
-                    resolve();
-                });
-            });
-        };
         for (let i = 0; i < immediateResult.length; ++i) {
             await sortingAnimation(i, immediateResult);
         }
+        setSortInProgress(false);
     };
 
-    const insertionSort = async () => {
-        const insertionSortIteration = (i: number, newArr: Array<number>): Promise<number[]> => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const updatedArray = insertionSortByIndex(i, [...newArr]);
-                    setSortElements(updatedArray);
-                    resolve(updatedArray);
-                }, 10);
-            });
-        };
-        let arr = [...sortElements];
-        for (let i = 1; i < numberOfElement; ++i) {
-            arr = await insertionSortIteration(i, arr);
-        }
-    };
-
-    const selectionSort = async () => {
-        const selectionSortIteration = (i: number, newArr: Array<number>): Promise<number[]> => {
-            return new Promise(resolve => {
-                setTimeout(() => {
-                    const updatedArray = selectionSortByIndex(i, [...newArr]);
-                    setSortElements(updatedArray);
-                    resolve(updatedArray);
-                }, 10);
-            });
-        };
-        let arr = [...sortElements];
-        for (let i = 0; i < numberOfElement - 1; ++i) {
-            arr = await selectionSortIteration(i, arr);
-        }
+    const sortingAnimation = (step: number, arr: number[][]): Promise<number[]> => {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                setSortElements(arr[step]);
+                resolve();
+            }, 10);
+        });
     };
 
     return (
@@ -107,7 +86,6 @@ const App: React.FC = () => {
                     <Typography variant="h6">
                         Sorting Algorithm Visualiser
                     </Typography>
-                    <Button color="inherit">Login</Button>
                 </Toolbar>
             </AppBar>
             <SortingOption
@@ -116,7 +94,8 @@ const App: React.FC = () => {
                 numberOfElement={numberOfElement}
                 sort={() => sort()}
                 updateSortingMethod={(method) => setSortingMethod(method)}
-                updateSortingElement={(number) => setNumberOfElement(number)} />
+                updateSortingElement={(number) => setNumberOfElement(number)}
+                resetArray={() => setSortElements(generateRandomArray(numberOfElement))} />
             <Box
                 display="flex"
                 alignItems="center"

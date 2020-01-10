@@ -1,10 +1,21 @@
-export const insertionSortByIndex =  (index: number, arr: Array<number>) => {
-    const key = arr[index];
-    let j = index - 1;
-    while (j >= 0 && (arr[j] > key)) {
-        arr[j + 1] = arr[j];
-        j--;
+const insertionSortHelper = (arr: Array<number>) => {
+    const sortedArray = [...arr];
+    const immediateResult: number[][] = [];
+    for (let i = 1; i < sortedArray.length; ++i) {
+        const key = sortedArray[i];
+        let j = i - 1;
+        while (j >= 0 && (sortedArray[j] > key)) {
+            sortedArray[j + 1] = sortedArray[j];
+            immediateResult.push([...sortedArray]);
+            j--;
+        }
+        sortedArray[j + 1] = key;
+        immediateResult.push([...sortedArray]);
     }
-    arr[j + 1] = key;
-    return arr;
+    return {
+        sortedArray: sortedArray,
+        immediateResult: immediateResult,
+    };
 };
+
+export default insertionSortHelper;

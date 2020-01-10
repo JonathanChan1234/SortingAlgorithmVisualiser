@@ -9,6 +9,7 @@ type SortingOptionProp = {
     sortingMethod: string;
     updateSortingElement: (numberOfElement: number) => void;
     updateSortingMethod: (method: string) => void;
+    resetArray: () => void;
     sort: () => void;
 };
 
@@ -38,6 +39,7 @@ const SortingOption: React.FC<SortingOptionProp> = ({
     sort,
     updateSortingMethod,
     updateSortingElement,
+    resetArray,
 }) => {
     const classes = useStyles();
     return (
@@ -49,6 +51,12 @@ const SortingOption: React.FC<SortingOptionProp> = ({
             p={1} m={1}>
             <Box p={1}>
                 <h3>Sorting Options</h3>
+            </Box>
+            <Box p={1}>
+                <Button
+                    disabled={sortInProgress}
+                    onClick={() => resetArray()}>
+                    Reset Array</Button>
             </Box>
             <Box p={1}>
                 <p>Number of Element: {numberOfElement}</p>
@@ -72,6 +80,8 @@ const SortingOption: React.FC<SortingOptionProp> = ({
                     <MenuItem value="insertion">Insertion Sort</MenuItem>
                     <MenuItem value="merge">Merge Sort</MenuItem>
                     <MenuItem value="selection">Selection Sort</MenuItem>
+                    <MenuItem value="quick">Quick Sort</MenuItem>
+                    <MenuItem value="bubble">Bubble Sort</MenuItem>
                 </Select>
             </Box>
             <Box p={1}>
