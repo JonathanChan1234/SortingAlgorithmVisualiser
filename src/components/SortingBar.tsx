@@ -2,18 +2,18 @@ import * as React from 'react';
 import { makeStyles, Theme, createStyles, Tooltip } from '@material-ui/core';
 
 type SortingBarProp = {
-    active: boolean;
+    color: string;
     height: number;
     numberOfElement: number;
 };
 
-const SortingBar: React.FC<SortingBarProp> = ({ active, height, numberOfElement }) => {
+const SortingBar: React.FC<SortingBarProp> = ({ color, height, numberOfElement }) => {
     const useStyles = makeStyles((theme: Theme) =>
         createStyles({
             bar: {
                 width: `calc(100% / ${numberOfElement})`,
                 height: `calc(100% * ${height} / 10000)`,
-                backgroundColor: "#6666ff",
+                backgroundColor: color,
                 border: `1px solid`,
             }
         }),
