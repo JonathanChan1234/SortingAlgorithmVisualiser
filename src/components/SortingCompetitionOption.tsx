@@ -1,34 +1,29 @@
 import * as React from 'react';
-import Box from '@material-ui/core/Box';
-import { Slider, Button, Select, MenuItem } from '@material-ui/core';
-import { MIN_NUMBER_OF_ELEMENT, DEFAULT_NUMBER_OF_ELEMENT, MAX_NUMBER_OF_ELEMENT } from '../utils/constants';
+import { Box, Button, Slider } from '@material-ui/core';
+import { DEFAULT_NUMBER_OF_ELEMENT, MIN_NUMBER_OF_ELEMENT, MAX_NUMBER_OF_ELEMENT } from '../utils/constants';
 
-type SortingOptionProp = {
-    numberOfElement: number;
-    sortInProgress: boolean;
-    sortingMethod: string;
-    updateSortingElement: (numberOfElement: number) => void;
-    updateSortingMethod: (method: string) => void;
-    resetArray: () => void;
-    sort: () => void;
+type SortingCompetitionOptionProps = {
+    sortInProgress: boolean,
+    numberOfElement: number,
+    resetArray: () => void,
+    updateSortingElement: (number: number) => void,
+    sort: () => void,
 };
 
-const SortingOption: React.FC<SortingOptionProp> = ({
-    numberOfElement,
-    sortingMethod,
+const SortingCompetitionOption: React.FC<SortingCompetitionOptionProps> = ({
     sortInProgress,
-    sort,
-    updateSortingMethod,
-    updateSortingElement,
+    numberOfElement,
     resetArray,
+    updateSortingElement,
+    sort,
 }) => {
     return (
         <Box
             flexDirection="column"
             display="flex">
             <Box>
-                <h2>Sorting Algorithm Visualiser</h2>
-                <h3>Options</h3>
+                <h2>Sorting Algorithm Competition</h2>
+                <h3>Option</h3>
             </Box>
             <Box
                 flexDirection="row"
@@ -55,17 +50,6 @@ const SortingOption: React.FC<SortingOptionProp> = ({
                         disabled={sortInProgress} />
                 </Box>
                 <Box p={1}>
-                    <Select
-                        onChange={(event) => updateSortingMethod(event.target.value as string)}
-                        value={sortingMethod}>
-                        <MenuItem value="insertion">Insertion Sort</MenuItem>
-                        <MenuItem value="merge">Merge Sort</MenuItem>
-                        <MenuItem value="selection">Selection Sort</MenuItem>
-                        <MenuItem value="quick">Quick Sort</MenuItem>
-                        <MenuItem value="bubble">Bubble Sort</MenuItem>
-                    </Select>
-                </Box>
-                <Box p={1}>
                     <Button
                         variant="contained"
                         color="secondary"
@@ -77,4 +61,4 @@ const SortingOption: React.FC<SortingOptionProp> = ({
     );
 };
 
-export default SortingOption;
+export default SortingCompetitionOption;

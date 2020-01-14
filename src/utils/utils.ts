@@ -4,4 +4,4 @@ export const generateRandomArray = (numberOfElement: number) => {
         randomArray.push(Math.floor(Math.random() * 10001));
     }
     return randomArray;
-}
+};
