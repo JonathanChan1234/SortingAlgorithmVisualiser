@@ -13,31 +13,30 @@ import bubbleSortHelper from '../sorting/bubbleSort';
 import { SortingResult } from '../types/type';
 
 const sortingAlgorithms = ["insertion", "selection", "bubble", "merge", "quick"];
+interface SortElement {
+    sortArray: number[];
+    animations: number[];
+}
+type SortElements = {
+    [algorithm: string]: SortElement
+};
+
 const SortingCompetition: React.FC = () => {
     const [numberOfElement, setNumberOfElement] = useState<number>(DEFAULT_NUMBER_OF_ELEMENT);
-    const [sortElements, setSortElements] = useState<{
-        algorithm: string,
-        sortArray: number[],
-        animations: number[]
-    }[]>(sortingAlgorithms.map(sortingAlgorithm => {
-        return {
-            algorithm: sortingAlgorithm,
-            sortArray: generateRandomArray(numberOfElement),
-            animations: [],
-        };
-    }));
+    const [sortElements, setSortElements] = useState<SortElements>();
     const [sortInProgress, setSortInProgress] = useState<boolean>(false);
     const [reset, setReset] = useState(false);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            setSortElements(sortingAlgorithms.map(sortingAlgorithm => {
-                return {
-                    algorithm: sortingAlgorithm,
+            const newRandomSortElements: SortElements = {};
+            sortingAlgorithms.forEach(sortingAlgorithm => {
+                newRandomSortElements[sortingAlgorithm] = {
                     sortArray: generateRandomArray(numberOfElement),
                     animations: [],
                 };
-            }));
+            });
+            setSortElements(newRandomSortElements);
             return () => {
                 clearTimeout(timeout);
             };
@@ -45,55 +44,75 @@ const SortingCompetition: React.FC = () => {
     }, [numberOfElement, reset]);
 
     const renderSortingModel = () => {
-        return sortElements.map(sortElement => (
+        if (!sortElements) return;
+        return Object.keys(sortElements).map(algorithm => (
             <SortingModel
-                key={sortElement.algorithm}
-                algorithm={sortElement.algorithm}
+                key={algorithm}
+                algorithm={algorithm}
                 numberOfElement={numberOfElement}
-                sortArray={sortElement.sortArray}
-                animations={sortElement.animations} />
+                sortArray={sortElements[algorithm].sortArray}
+                animations={sortElements[algorithm].animations} />
         ));
     };
 
     const sortCompetitionStart = () => {
         setSortInProgress(true);
+        if (!sortElements) return;
         const sortingResult: SortingResult[] = [];
-        for (const algorithm of sortingAlgorithms) {
-            const sortArray =
-                sortElements.find(sortElement => sortElement.algorithm === algorithm)?.sortArray || [];
+        Object.keys(sortElements).forEach(algorithm => {
+            const sortArray = sortElements[algorithm].sortArray;
             switch (algorithm) {
                 case "merge":
-                    sortingResult.push({ ...mergeSortHelper(sortArray), algorithm: algorithm });
+                    sortingResult.push({ ...mergeSortHelper(sortArray), algorithm: "merge" });
                     break;
                 case "insertion":
-                    sortingResult.push({ ...insertionSortHelper(sortArray), algorithm: algorithm });
+                    sortingResult.push({ ...insertionSortHelper(sortArray), algorithm: "insertion" });
                     break;
                 case "selection":
-                    sortingResult.push({ ...selectionSortHelper(sortArray), algorithm: algorithm });
+                    sortingResult.push({ ...selectionSortHelper(sortArray), algorithm: "selection" });
                     break;
                 case "quick":
-                    sortingResult.push({ ...quickSortHelper(sortArray), algorithm: algorithm });
+                    sortingResult.push({ ...quickSortHelper(sortArray), algorithm: "quick" });
                     break;
                 case "bubble":
-                    sortingResult.push({ ...bubbleSortHelper(sortArray), algorithm: algorithm });
+                    sortingResult.push({ ...bubbleSortHelper(sortArray), algorithm: "bubble" });
+                    break;
+                default:
+                    sortingResult.push({ ...bubbleSortHelper(sortArray), algorithm: "buble" });
                     break;
             }
-        }
-        const iterationArray = sortingResult.map(result => result.immediateResult.length);
-        const maxIteration = Math.max(...iterationArray);
-        for (let i = 0; i < sortingResult.length;  ++i) {
-            setTimeout(() => {
-                
+        });
+        startAnimation(sortingResult)
+            .then(() => {
+                setSortInProgress(false);
             })
-        }
-        console.log(sortingResult);
-        setSortInProgress(false);
-        return sortingResult;
+            .catch(err => console.log(err));
     };
 
-    const sortAnimation = (arr: number[], animation: number[], algorithm: string) => {
+    const startAnimation = async (sortingResult: SortingResult[]) => {
+        const maxIteration = Math.max(...sortingResult.map(result => result.immediateResult.length));
+        const newSortArray: SortElements = { ...sortElements };
+        for (let i = 0; i < maxIteration; ++i) {
+            sortingResult.forEach(result => {
+                if (!result.algorithm) throw new Error("undefined algorithm");
+                if (i < result.immediateResult.length) {
+                    newSortArray[result.algorithm] = {
+                        sortArray: result.immediateResult[i],
+                        animations: result.animations[i],
+                    };
+                } else {
+                    console.log(`${result.algorithm} finished`);
+                }
+            });
+            console.log(newSortArray)
+            await sortAnimation(newSortArray);
+        }
+    };
+
+    const sortAnimation = (newSortElements: SortElements) => {
         return new Promise(resolve => {
             setTimeout(() => {
+                setSortElements(newSortElements);
                 resolve();
             }, 100);
         });
