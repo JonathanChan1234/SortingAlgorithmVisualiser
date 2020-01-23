@@ -86,25 +86,33 @@ const SortingCompetition: React.FC = () => {
             .then(() => {
                 setSortInProgress(false);
             })
-            .catch(err => console.log(err));
+            .catch(err => alert(err.message));
     };
 
     const startAnimation = async (sortingResult: SortingResult[]) => {
         const maxIteration = Math.max(...sortingResult.map(result => result.immediateResult.length));
-        const newSortArray: SortElements = { ...sortElements };
+        let newSortArray: SortElements = {};
         for (let i = 0; i < maxIteration; ++i) {
-            sortingResult.forEach(result => {
-                if (!result.algorithm) throw new Error("undefined algorithm");
-                if (i < result.immediateResult.length) {
-                    newSortArray[result.algorithm] = {
-                        sortArray: result.immediateResult[i],
-                        animations: result.animations[i],
+            for (const sortingResultByAlgorithm of sortingResult) {
+                if (i < sortingResultByAlgorithm.immediateResult.length - 1) {
+                    newSortArray = {
+                        ...newSortArray,
+                        [sortingResultByAlgorithm.algorithm]: {
+                            sortArray: sortingResultByAlgorithm.immediateResult[i],
+                            animations: sortingResultByAlgorithm.animations[i],
+                        }
                     };
-                } else {
-                    console.log(`${result.algorithm} finished`);
                 }
-            });
-            console.log(newSortArray)
+                if (i === sortingResultByAlgorithm.immediateResult.length - 1) {
+                    newSortArray = {
+                        ...newSortArray,
+                        [sortingResultByAlgorithm.algorithm]: {
+                            sortArray: sortingResultByAlgorithm.immediateResult[sortingResultByAlgorithm.immediateResult.length - 1],
+                            animations: [],
+                        }
+                    };
+                }
+            }
             await sortAnimation(newSortArray);
         }
     };
@@ -114,7 +122,7 @@ const SortingCompetition: React.FC = () => {
             setTimeout(() => {
                 setSortElements(newSortElements);
                 resolve();
-            }, 100);
+            }, 10);
         });
     };
 

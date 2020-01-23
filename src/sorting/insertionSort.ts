@@ -19,6 +19,7 @@ const insertionSortHelper = (arr: Array<number>) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
+        algorithm: "insertion",
     };
 };
 

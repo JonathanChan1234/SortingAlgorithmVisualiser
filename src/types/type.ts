@@ -2,7 +2,7 @@ export interface SortingResult {
     sortedArray: number[];
     immediateResult: number[][];
     animations: number[][];
-    algorithm?: string;
+    algorithm: string;
 }
 
 export interface SortElements {

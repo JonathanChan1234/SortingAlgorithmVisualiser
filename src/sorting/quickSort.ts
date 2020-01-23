@@ -7,6 +7,7 @@ const quickSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
+        algorithm: "quick",
     };
 };
 

@@ -52,7 +52,8 @@ const SortingVisualiser: React.FC = () => {
         let sortingResult: SortingResult = {
             sortedArray: [],
             animations: [],
-            immediateResult: []
+            immediateResult: [],
+            algorithm: "",
         };
         const { sortArray } = sortElements;
         switch (sortingMethod) {

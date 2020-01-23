@@ -7,6 +7,7 @@ const mergeSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
+        algorithm: "merge",
     };
 };
 

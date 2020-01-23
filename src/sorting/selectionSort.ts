@@ -20,6 +20,7 @@ const selectionSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
+        algorithm: "selection",
     };
 };
 
