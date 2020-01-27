@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Box, Button, Slider } from '@material-ui/core';
-import { DEFAULT_NUMBER_OF_ELEMENT, MIN_NUMBER_OF_ELEMENT, MAX_NUMBER_OF_ELEMENT } from '../utils/constants';
 
 type SortingCompetitionOptionProps = {
+    defaultNumberOfElement: number,
+    minNumberOfElement: number,
+    maxNumberOfElement: number,
     sortInProgress: boolean,
     numberOfElement: number,
     resetArray: () => void,
@@ -11,6 +13,9 @@ type SortingCompetitionOptionProps = {
 };
 
 const SortingCompetitionOption: React.FC<SortingCompetitionOptionProps> = ({
+    defaultNumberOfElement,
+    minNumberOfElement,
+    maxNumberOfElement,
     sortInProgress,
     numberOfElement,
     resetArray,
@@ -39,14 +44,14 @@ const SortingCompetitionOption: React.FC<SortingCompetitionOptionProps> = ({
                 <Box p={1}>
                     <p>Number of Element: {numberOfElement}</p>
                     <Slider
-                        defaultValue={DEFAULT_NUMBER_OF_ELEMENT}
                         getAriaValueText={(value: number) => { return value + ""; }}
                         aria-labelledby="discrete-slider"
                         valueLabelDisplay="auto"
                         onChange={(event, value) => updateSortingElement(value as number)}
                         value={numberOfElement}
-                        min={MIN_NUMBER_OF_ELEMENT}
-                        max={MAX_NUMBER_OF_ELEMENT}
+                        defaultValue={defaultNumberOfElement}
+                        min={minNumberOfElement}
+                        max={maxNumberOfElement}
                         disabled={sortInProgress} />
                 </Box>
                 <Box p={1}>

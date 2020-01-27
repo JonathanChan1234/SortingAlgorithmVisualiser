@@ -1,3 +1,5 @@
+import { SELECTION_SORT } from "../utils/constants";
+
 const selectionSortHelper = (arr: number[]) => {
     const sortedArray = [...arr];
     const immediateResult: number[][] = [];
@@ -20,7 +22,7 @@ const selectionSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
-        algorithm: "selection",
+        algorithm: SELECTION_SORT,
     };
 };
 

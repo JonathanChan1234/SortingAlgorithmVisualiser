@@ -108,8 +108,14 @@
   
       // Multi-line object literals and function calls should have a trailing comma. This helps avoid merge conflicts.
       "trailing-comma": {"severity": "warning"},
-      "semicolon": [true, "always"]
+      "semicolon": [true, "always"],
+      "react-hooks-nesting": "error"
     },
+
+    "extends": [
+      // your other plugins...
+      "tslint-react-hooks"
+    ],
   
     "defaultSeverity": "error"
   }

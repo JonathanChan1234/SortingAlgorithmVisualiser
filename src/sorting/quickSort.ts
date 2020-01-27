@@ -1,3 +1,5 @@
+import { QUICK_SORT } from "../utils/constants";
+
 const quickSortHelper = (arr: number[]) => {
     const sortedArray = [...arr];
     const immediateResult: number[][] = [];
@@ -7,7 +9,7 @@ const quickSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
-        algorithm: "quick",
+        algorithm: QUICK_SORT,
     };
 };
 

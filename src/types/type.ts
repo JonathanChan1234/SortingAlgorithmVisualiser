@@ -6,6 +6,9 @@ export interface SortingResult {
 }
 
 export interface SortElements {
-    sortArray: number[];
-    animations: number[];
+    [algorithm: string]: {
+        sortArray: number[];
+        animations: number[];
+        comparison: number;
+    }
 }

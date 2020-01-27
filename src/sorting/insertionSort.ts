@@ -1,3 +1,5 @@
+import { INSERTION_SORT } from "../utils/constants";
+
 const insertionSortHelper = (arr: Array<number>) => {
     const sortedArray = [...arr];
     const immediateResult: number[][] = [];
@@ -19,7 +21,7 @@ const insertionSortHelper = (arr: Array<number>) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
-        algorithm: "insertion",
+        algorithm: INSERTION_SORT,
     };
 };
 

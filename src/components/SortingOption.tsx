@@ -1,9 +1,11 @@
 import * as React from 'react';
 import Box from '@material-ui/core/Box';
 import { Slider, Button, Select, MenuItem } from '@material-ui/core';
-import { MIN_NUMBER_OF_ELEMENT, DEFAULT_NUMBER_OF_ELEMENT, MAX_NUMBER_OF_ELEMENT } from '../utils/constants';
 
 type SortingOptionProp = {
+    minNumberOfElement: number;
+    maxNumberOfElement: number;
+    defaultNumberOfNumber: number;
     numberOfElement: number;
     sortInProgress: boolean;
     sortingMethod: string;
@@ -14,6 +16,9 @@ type SortingOptionProp = {
 };
 
 const SortingOption: React.FC<SortingOptionProp> = ({
+    maxNumberOfElement,
+    minNumberOfElement,
+    defaultNumberOfNumber,
     numberOfElement,
     sortingMethod,
     sortInProgress,
@@ -44,18 +49,19 @@ const SortingOption: React.FC<SortingOptionProp> = ({
                 <Box p={1}>
                     <p>Number of Element: {numberOfElement}</p>
                     <Slider
-                        defaultValue={DEFAULT_NUMBER_OF_ELEMENT}
                         getAriaValueText={(value: number) => { return value + ""; }}
                         aria-labelledby="discrete-slider"
                         valueLabelDisplay="auto"
                         onChange={(event, value) => updateSortingElement(value as number)}
                         value={numberOfElement}
-                        min={MIN_NUMBER_OF_ELEMENT}
-                        max={MAX_NUMBER_OF_ELEMENT}
+                        defaultValue={defaultNumberOfNumber}
+                        min={minNumberOfElement}
+                        max={maxNumberOfElement}
                         disabled={sortInProgress} />
                 </Box>
                 <Box p={1}>
                     <Select
+                        disabled={sortInProgress}
                         onChange={(event) => updateSortingMethod(event.target.value as string)}
                         value={sortingMethod}>
                         <MenuItem value="insertion">Insertion Sort</MenuItem>

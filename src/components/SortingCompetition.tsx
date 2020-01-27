@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { Box } from '@material-ui/core';
 
-import { DEFAULT_NUMBER_OF_ELEMENT } from '../utils/constants';
 import { generateRandomArray } from '../utils/utils';
+import { SortingResult, SortElements } from '../types/type';
+// Components
 import SortingCompetitionOption from './SortingCompetitionOption';
 import SortingModel from './SortingModel';
+import SortingCompetitionTable from './SortingCompetitionTable';
+// Sorting Algorithm Helper
 import mergeSortHelper from '../sorting/mergeSort';
 import insertionSortHelper from '../sorting/insertionSort';
 import selectionSortHelper from '../sorting/selectionSort';
 import quickSortHelper from '../sorting/quickSort';
 import bubbleSortHelper from '../sorting/bubbleSort';
-import { SortingResult } from '../types/type';
+import {
+    MERGE_SORT,
+    INSERTION_SORT,
+    SELECTION_SORT,
+    QUICK_SORT,
+    BUBBLE_SORT
+} from '../utils/constants';
 
-const sortingAlgorithms = ["insertion", "selection", "bubble", "merge", "quick"];
-interface SortElement {
-    sortArray: number[];
-    animations: number[];
-}
-type SortElements = {
-    [algorithm: string]: SortElement
-};
+const sortingAlgorithms = [INSERTION_SORT, SELECTION_SORT, BUBBLE_SORT, MERGE_SORT, QUICK_SORT];
+const animationTimeout: NodeJS.Timeout[] = [];
 
 const SortingCompetition: React.FC = () => {
-    const [numberOfElement, setNumberOfElement] = useState<number>(DEFAULT_NUMBER_OF_ELEMENT);
+    const [numberOfElement, setNumberOfElement] = useState<number>(20);
     const [sortElements, setSortElements] = useState<SortElements>();
     const [sortInProgress, setSortInProgress] = useState<boolean>(false);
     const [reset, setReset] = useState(false);
@@ -30,9 +33,11 @@ const SortingCompetition: React.FC = () => {
     useEffect(() => {
         const timeout = setTimeout(() => {
             const newRandomSortElements: SortElements = {};
+            const randomArray: number[] = generateRandomArray(numberOfElement);
             sortingAlgorithms.forEach(sortingAlgorithm => {
                 newRandomSortElements[sortingAlgorithm] = {
-                    sortArray: generateRandomArray(numberOfElement),
+                    comparison: 0,
+                    sortArray: randomArray,
                     animations: [],
                 };
             });
@@ -42,6 +47,13 @@ const SortingCompetition: React.FC = () => {
             };
         }, 200);
     }, [numberOfElement, reset]);
+
+    useEffect(() => {
+        animationTimeout.length = 0;
+        return () => {
+            animationTimeout.forEach(timeout => clearTimeout(timeout));
+        };
+    }, []);
 
     const renderSortingModel = () => {
         if (!sortElements) return;
@@ -62,23 +74,23 @@ const SortingCompetition: React.FC = () => {
         Object.keys(sortElements).forEach(algorithm => {
             const sortArray = sortElements[algorithm].sortArray;
             switch (algorithm) {
-                case "merge":
-                    sortingResult.push({ ...mergeSortHelper(sortArray), algorithm: "merge" });
+                case MERGE_SORT:
+                    sortingResult.push({ ...mergeSortHelper(sortArray) });
                     break;
-                case "insertion":
-                    sortingResult.push({ ...insertionSortHelper(sortArray), algorithm: "insertion" });
+                case INSERTION_SORT:
+                    sortingResult.push({ ...insertionSortHelper(sortArray) });
                     break;
-                case "selection":
-                    sortingResult.push({ ...selectionSortHelper(sortArray), algorithm: "selection" });
+                case SELECTION_SORT:
+                    sortingResult.push({ ...selectionSortHelper(sortArray) });
                     break;
-                case "quick":
-                    sortingResult.push({ ...quickSortHelper(sortArray), algorithm: "quick" });
+                case QUICK_SORT:
+                    sortingResult.push({ ...quickSortHelper(sortArray) });
                     break;
-                case "bubble":
-                    sortingResult.push({ ...bubbleSortHelper(sortArray), algorithm: "bubble" });
+                case BUBBLE_SORT:
+                    sortingResult.push({ ...bubbleSortHelper(sortArray) });
                     break;
                 default:
-                    sortingResult.push({ ...bubbleSortHelper(sortArray), algorithm: "buble" });
+                    sortingResult.push({ ...bubbleSortHelper(sortArray) });
                     break;
             }
         });
@@ -94,20 +106,25 @@ const SortingCompetition: React.FC = () => {
         let newSortArray: SortElements = {};
         for (let i = 0; i < maxIteration; ++i) {
             for (const sortingResultByAlgorithm of sortingResult) {
-                if (i < sortingResultByAlgorithm.immediateResult.length - 1) {
+                const immediateResultLength = sortingResultByAlgorithm.immediateResult.length;
+                // If the sorting is not yet finished, update the immediate result and animation
+                if (i < immediateResultLength - 1) {
                     newSortArray = {
                         ...newSortArray,
                         [sortingResultByAlgorithm.algorithm]: {
+                            comparison: i,
                             sortArray: sortingResultByAlgorithm.immediateResult[i],
                             animations: sortingResultByAlgorithm.animations[i],
                         }
                     };
                 }
-                if (i === sortingResultByAlgorithm.immediateResult.length - 1) {
+                // Once the sorting is finished, clear the animation
+                if (i === immediateResultLength - 1) {
                     newSortArray = {
                         ...newSortArray,
                         [sortingResultByAlgorithm.algorithm]: {
-                            sortArray: sortingResultByAlgorithm.immediateResult[sortingResultByAlgorithm.immediateResult.length - 1],
+                            comparison: i,
+                            sortArray: sortingResultByAlgorithm.immediateResult[i],
                             animations: [],
                         }
                     };
@@ -119,21 +136,30 @@ const SortingCompetition: React.FC = () => {
 
     const sortAnimation = (newSortElements: SortElements) => {
         return new Promise(resolve => {
-            setTimeout(() => {
+            const timeoutId = setTimeout(() => {
                 setSortElements(newSortElements);
                 resolve();
             }, 10);
+            animationTimeout.push(timeoutId);
         });
     };
 
     return (
-        <Box display="flex" flexDirection="column">
+        <Box
+            display="flex"
+            flexDirection="column"
+            style={{ width: "100%" }}
+            alignItems="center">
             <SortingCompetitionOption
+                minNumberOfElement={10}
+                maxNumberOfElement={30}
+                defaultNumberOfElement={20}
                 numberOfElement={numberOfElement}
                 sortInProgress={sortInProgress}
                 sort={() => sortCompetitionStart()}
                 updateSortingElement={(number) => setNumberOfElement(number)}
                 resetArray={() => setReset(!reset)} />
+            <SortingCompetitionTable sortElements={sortElements}/>
             <Box
                 justifySelf="center"
                 display="flex"

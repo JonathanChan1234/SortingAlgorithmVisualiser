@@ -1,3 +1,5 @@
+import { BUBBLE_SORT } from "../utils/constants";
+
 const bubbleSortHelper = (arr: number[]) => {
     const sortedArray = [...arr];
     const immediateResult: number[][] = [];
@@ -20,7 +22,7 @@ const bubbleSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
-        algorithm: "bubble",
+        algorithm: BUBBLE_SORT,
     };
 };
 

@@ -1,3 +1,5 @@
+import { MERGE_SORT } from "../utils/constants";
+
 const mergeSortHelper = (arr: number[]) => {
     const sortedArray = [...arr];
     const immediateResult: number[][] = [];
@@ -7,7 +9,7 @@ const mergeSortHelper = (arr: number[]) => {
         sortedArray: sortedArray,
         immediateResult: immediateResult,
         animations: animations,
-        algorithm: "merge",
+        algorithm: MERGE_SORT,
     };
 };
 

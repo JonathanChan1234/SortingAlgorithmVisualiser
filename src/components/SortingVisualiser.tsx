@@ -14,12 +14,26 @@ import bubbleSortHelper from '../sorting/bubbleSort';
 
 // Constants and Utils
 import { generateRandomArray } from '../utils/utils';
-import { DEFAULT_NUMBER_OF_ELEMENT, animationColor, defaultColor } from '../utils/constants';
-import { SortingResult, SortElements } from '../types/type';
+import { 
+    animationColor, 
+    defaultColor,
+    QUICK_SORT, 
+    INSERTION_SORT, 
+    SELECTION_SORT, 
+    MERGE_SORT, 
+    BUBBLE_SORT } from '../utils/constants';
+import { SortingResult } from '../types/type';
+
+type SortElements = {
+    sortArray: number[],
+    animations: number[],
+};
+
+const animationTimeout: NodeJS.Timeout[] = [];
 
 const SortingVisualiser: React.FC = () => {
-    const [sortingMethod, setSortingMethod] = useState("quick");
-    const [numberOfElement, setNumberOfElement] = useState<number>(DEFAULT_NUMBER_OF_ELEMENT);
+    const [sortingMethod, setSortingMethod] = useState(QUICK_SORT);
+    const [numberOfElement, setNumberOfElement] = useState<number>(20);
     const [sortElements, setSortElements] = useState<SortElements>({ sortArray: [], animations: [] });
     const [sortInProgress, setSortInProgress] = useState<boolean>(false);
 
@@ -34,6 +48,13 @@ const SortingVisualiser: React.FC = () => {
             clearTimeout(timeout);
         };
     }, [numberOfElement]);
+
+    useEffect(() => {
+        animationTimeout.length = 0;
+        return () => {
+            animationTimeout.forEach(timeout => clearTimeout(timeout));
+        };
+    }, []);
 
     const renderSortingBar = (): Array<JSX.Element> => {
         let color = 0;
@@ -57,19 +78,19 @@ const SortingVisualiser: React.FC = () => {
         };
         const { sortArray } = sortElements;
         switch (sortingMethod) {
-            case "insertion":
+            case INSERTION_SORT:
                 sortingResult = insertionSortHelper(sortArray);
                 break;
-            case "selection":
+            case SELECTION_SORT:
                 sortingResult = selectionSortHelper(sortArray);
                 break;
-            case "merge":
+            case MERGE_SORT:
                 sortingResult = mergeSortHelper(sortArray);
                 break;
-            case "quick":
+            case QUICK_SORT:
                 sortingResult = quickSortHelper(sortArray);
                 break;
-            case "bubble":
+            case BUBBLE_SORT:
                 sortingResult = bubbleSortHelper(sortArray);
                 break;
             default:
@@ -85,16 +106,20 @@ const SortingVisualiser: React.FC = () => {
 
     const sortingAnimation = (sortArray: number[], animations: number[]): Promise<number[]> => {
         return new Promise(resolve => {
-            setTimeout(() => {
+            const timeout = setTimeout(() => {
                 setSortElements({ sortArray: sortArray, animations: animations });
                 resolve();
             }, Math.ceil(1000 / numberOfElement));
+            animationTimeout.push(timeout);
         });
     };
 
     return (
         <>
             <SortingOption
+                defaultNumberOfNumber={20}
+                minNumberOfElement={10}
+                maxNumberOfElement={100}
                 sortingMethod={sortingMethod}
                 sortInProgress={sortInProgress}
                 numberOfElement={numberOfElement}
