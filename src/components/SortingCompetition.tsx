@@ -20,7 +20,8 @@ import {
     QUICK_SORT,
     BUBBLE_SORT
 } from '../utils/constants';
-import _ from 'lodash';
+import useDebounceEffect from '../hook/debounce';
+import useThrottleEffect from '../hook/throttle';
 
 const sortingAlgorithms = [INSERTION_SORT, SELECTION_SORT, BUBBLE_SORT, MERGE_SORT, QUICK_SORT];
 const animationTimeout: NodeJS.Timeout[] = [];
@@ -29,9 +30,26 @@ const SortingCompetition: React.FC = () => {
     const [numberOfElement, setNumberOfElement] = useState<number>(20);
     const [sortElements, setSortElements] = useState<SortElements>();
     const [sortInProgress, setSortInProgress] = useState<boolean>(false);
+    const [reset, setReset] = useState<boolean>(false);
+    const debounceItem = useDebounceEffect(numberOfElement, 20, 800);
+    const throttleItem = useThrottleEffect(numberOfElement, 20, 1000);
 
-    useEffect(_.throttle(() => {
-        const randomArray = generateRandomArray(numberOfElement);
+    useEffect(() => {
+        console.log(`Debounce Item: ${debounceItem}`);
+    }, [debounceItem]);
+
+    useEffect(() => {
+        console.log(`Throttle Item: ${throttleItem}`);
+        initSortElements(throttleItem);
+    }, [throttleItem, reset]);
+
+    useEffect(() => {
+        animationTimeout.length = 0;
+        return () => animationTimeout.forEach(timeout => clearTimeout(timeout));
+    }, []);
+
+    const initSortElements = (number: number) => {
+        const randomArray = generateRandomArray(number);
         const newSortElements: SortElements = {};
         sortingAlgorithms.forEach(sortingAlgorithm => {
             newSortElements[sortingAlgorithm] = {
@@ -41,14 +59,7 @@ const SortingCompetition: React.FC = () => {
             };
         });
         setSortElements(newSortElements);
-    }, 100), [numberOfElement]);
-
-    useEffect(() => {
-        animationTimeout.length = 0;
-        return () => {
-            animationTimeout.forEach(timeout => clearTimeout(timeout));
-        };
-    }, []);
+    };
 
     const renderSortingModel = () => {
         if (!sortElements) return;
@@ -90,9 +101,7 @@ const SortingCompetition: React.FC = () => {
             }
         });
         startAnimation(sortingResult)
-            .then(() => {
-                setSortInProgress(false);
-            })
+            .then(() => setSortInProgress(false))
             .catch(err => alert(err.message));
     };
 
@@ -154,7 +163,7 @@ const SortingCompetition: React.FC = () => {
                 sortInProgress={sortInProgress}
                 sort={() => sortCompetitionStart()}
                 updateSortingElement={(number) => setNumberOfElement(number)}
-                resetArray={() => setNumberOfElement(numberOfElement)} />
+                resetArray={() => setReset(!reset)} />
             <SortingCompetitionTable sortElements={sortElements} />
             <Box
                 display="flex"

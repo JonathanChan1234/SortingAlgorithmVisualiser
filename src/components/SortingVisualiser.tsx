@@ -14,15 +14,17 @@ import bubbleSortHelper from '../sorting/bubbleSort';
 
 // Constants and Utils
 import { generateRandomArray } from '../utils/utils';
-import { 
-    animationColor, 
+import {
+    animationColor,
     defaultColor,
-    QUICK_SORT, 
-    INSERTION_SORT, 
-    SELECTION_SORT, 
-    MERGE_SORT, 
-    BUBBLE_SORT } from '../utils/constants';
+    QUICK_SORT,
+    INSERTION_SORT,
+    SELECTION_SORT,
+    MERGE_SORT,
+    BUBBLE_SORT
+} from '../utils/constants';
 import { SortingResult } from '../types/type';
+import useThrottleEffect from '../hook/throttle';
 
 type SortElements = {
     sortArray: number[],
@@ -36,24 +38,18 @@ const SortingVisualiser: React.FC = () => {
     const [numberOfElement, setNumberOfElement] = useState<number>(20);
     const [sortElements, setSortElements] = useState<SortElements>({ sortArray: [], animations: [] });
     const [sortInProgress, setSortInProgress] = useState<boolean>(false);
+    const throttleItem = useThrottleEffect(numberOfElement, 20, 800);
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setSortElements({
-                sortArray: generateRandomArray(numberOfElement),
-                animations: []
-            });
-        }, 200);
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [numberOfElement]);
+        setSortElements({
+            sortArray: generateRandomArray(throttleItem),
+            animations: []
+        });
+    }, [throttleItem]);
 
     useEffect(() => {
         animationTimeout.length = 0;
-        return () => {
-            animationTimeout.forEach(timeout => clearTimeout(timeout));
-        };
+        return () => animationTimeout.forEach(timeout => clearTimeout(timeout));
     }, []);
 
     const renderSortingBar = (): Array<JSX.Element> => {
