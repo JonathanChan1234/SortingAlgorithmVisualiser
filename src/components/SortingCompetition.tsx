@@ -20,6 +20,7 @@ import {
     QUICK_SORT,
     BUBBLE_SORT
 } from '../utils/constants';
+import _ from 'lodash';
 
 const sortingAlgorithms = [INSERTION_SORT, SELECTION_SORT, BUBBLE_SORT, MERGE_SORT, QUICK_SORT];
 const animationTimeout: NodeJS.Timeout[] = [];
@@ -28,25 +29,19 @@ const SortingCompetition: React.FC = () => {
     const [numberOfElement, setNumberOfElement] = useState<number>(20);
     const [sortElements, setSortElements] = useState<SortElements>();
     const [sortInProgress, setSortInProgress] = useState<boolean>(false);
-    const [reset, setReset] = useState(false);
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            const newRandomSortElements: SortElements = {};
-            const randomArray: number[] = generateRandomArray(numberOfElement);
-            sortingAlgorithms.forEach(sortingAlgorithm => {
-                newRandomSortElements[sortingAlgorithm] = {
-                    comparison: 0,
-                    sortArray: randomArray,
-                    animations: [],
-                };
-            });
-            setSortElements(newRandomSortElements);
-            return () => {
-                clearTimeout(timeout);
+    useEffect(_.throttle(() => {
+        const randomArray = generateRandomArray(numberOfElement);
+        const newSortElements: SortElements = {};
+        sortingAlgorithms.forEach(sortingAlgorithm => {
+            newSortElements[sortingAlgorithm] = {
+                sortArray: randomArray,
+                animations: [],
+                comparison: 0,
             };
-        }, 200);
-    }, [numberOfElement, reset]);
+        });
+        setSortElements(newSortElements);
+    }, 100), [numberOfElement]);
 
     useEffect(() => {
         animationTimeout.length = 0;
@@ -149,7 +144,8 @@ const SortingCompetition: React.FC = () => {
             display="flex"
             flexDirection="column"
             style={{ width: "100%" }}
-            alignItems="center">
+            alignItems="center"
+            justifyContent="center">
             <SortingCompetitionOption
                 minNumberOfElement={10}
                 maxNumberOfElement={30}
@@ -158,14 +154,13 @@ const SortingCompetition: React.FC = () => {
                 sortInProgress={sortInProgress}
                 sort={() => sortCompetitionStart()}
                 updateSortingElement={(number) => setNumberOfElement(number)}
-                resetArray={() => setReset(!reset)} />
-            <SortingCompetitionTable sortElements={sortElements}/>
+                resetArray={() => setNumberOfElement(numberOfElement)} />
+            <SortingCompetitionTable sortElements={sortElements} />
             <Box
-                justifySelf="center"
                 display="flex"
                 flexDirection="row"
                 flexWrap="wrap"
-                style={{ width: "100%" }}
+                style={{ width: "80%" }}
                 m={1}>
                 {renderSortingModel()}
             </Box>

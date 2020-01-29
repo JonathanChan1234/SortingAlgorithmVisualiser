@@ -7,16 +7,23 @@ import {
     TableCell,
     TableBody,
     Paper,
-    makeStyles
+    makeStyles,
+    Theme
 } from '@material-ui/core';
 import { SortElements } from '../types/type';
 
-const useStyles = makeStyles({
-    table: {
-        minWidth: 650,
-        maxWidth: 700
+const useStyles = makeStyles((theme: Theme) => ({
+    comparisonTable: {
+        [theme.breakpoints.down('md')]: {
+            width: "85%",
+            height: 100,
+        },
+        [theme.breakpoints.up('lg')]: {
+            minWidth: 600,
+            maxWidth: 750,
+        },
     }
-});
+}));
 
 type SortingCompetitionTableProp = {
     sortElements?: SortElements
@@ -35,8 +42,8 @@ const SortingCompetitionTable: React.FC<SortingCompetitionTableProp> = ({ sortEl
     };
 
     return (
-        <TableContainer component={Paper} className={classes.table}>
-            <Table size="small" className={classes.table}>
+        <TableContainer component={Paper} className={classes.comparisonTable}>
+            <Table size="small" className={classes.comparisonTable}>
                 <TableHead>
                     <TableRow>
                         <TableCell>Sorting Method</TableCell>

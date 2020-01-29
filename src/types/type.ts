@@ -10,5 +10,5 @@ export interface SortElements {
         sortArray: number[];
         animations: number[];
         comparison: number;
-    }
+    };
 }

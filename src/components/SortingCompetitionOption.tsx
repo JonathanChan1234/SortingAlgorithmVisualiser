@@ -26,10 +26,7 @@ const SortingCompetitionOption: React.FC<SortingCompetitionOptionProps> = ({
         <Box
             flexDirection="column"
             display="flex">
-            <Box>
-                <h2>Sorting Algorithm Competition</h2>
-                <h3>Option</h3>
-            </Box>
+            <h2 style={{ margin: 0 }}>Sorting Algorithm Competition</h2>
             <Box
                 flexDirection="row"
                 display="flex"
@@ -41,13 +38,13 @@ const SortingCompetitionOption: React.FC<SortingCompetitionOptionProps> = ({
                         onClick={() => resetArray()}>
                         Reset Array</Button>
                 </Box>
-                <Box p={1}>
+                <Box style={{ margin: 0 }}>
                     <p>Number of Element: {numberOfElement}</p>
                     <Slider
                         getAriaValueText={(value: number) => { return value + ""; }}
                         aria-labelledby="discrete-slider"
                         valueLabelDisplay="auto"
-                        onChange={(event, value) => updateSortingElement(value as number)}
+                        onChange={(event, number) => updateSortingElement(number as number)}
                         value={numberOfElement}
                         defaultValue={defaultNumberOfElement}
                         min={minNumberOfElement}

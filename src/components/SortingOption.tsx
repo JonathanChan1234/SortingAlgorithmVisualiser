@@ -31,10 +31,7 @@ const SortingOption: React.FC<SortingOptionProp> = ({
         <Box
             flexDirection="column"
             display="flex">
-            <Box>
-                <h2>Sorting Algorithm Visualiser</h2>
-                <h3>Options</h3>
-            </Box>
+            <h2 style={{ margin: 0 }}>Sorting Algorithm Visualiser</h2>
             <Box
                 flexDirection="row"
                 display="flex"
@@ -45,6 +42,9 @@ const SortingOption: React.FC<SortingOptionProp> = ({
                         disabled={sortInProgress}
                         onClick={() => resetArray()}>
                         Reset Array</Button>
+                </Box>
+                <Box>
+                    
                 </Box>
                 <Box p={1}>
                     <p>Number of Element: {numberOfElement}</p>
