@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Box from '@material-ui/core/Box';
 import { Slider, Button, Select, MenuItem } from '@material-ui/core';
+import { sortingConfiguraiton } from '../../sorting/configuration';
 
 type SortingOptionProp = {
     minNumberOfElement: number;
@@ -28,55 +29,61 @@ const SortingOption: React.FC<SortingOptionProp> = ({
     resetArray,
 }) => {
     return (
-        <Box
-            flexDirection="column"
-            display="flex">
+        <Box flexDirection='column' display='flex'>
             <h2 style={{ margin: 0 }}>Sorting Algorithm Visualiser</h2>
             <Box
-                flexDirection="row"
-                display="flex"
-                alignItems="center"
-                justifyContent="center">
+                flexDirection='row'
+                display='flex'
+                alignItems='center'
+                justifyContent='center'>
                 <Box p={1}>
                     <Button
                         disabled={sortInProgress}
                         onClick={() => resetArray()}>
-                        Reset Array</Button>
-                </Box>
-                <Box>
-                    
+                        Reset Array
+                    </Button>
                 </Box>
                 <Box p={1}>
                     <p>Number of Element: {numberOfElement}</p>
                     <Slider
-                        getAriaValueText={(value: number) => { return value + ""; }}
-                        aria-labelledby="discrete-slider"
-                        valueLabelDisplay="auto"
-                        onChange={(event, value) => updateSortingElement(value as number)}
+                        getAriaValueText={(value: number) => {
+                            return value + '';
+                        }}
+                        aria-labelledby='discrete-slider'
+                        valueLabelDisplay='auto'
+                        onChange={(event, value) =>
+                            updateSortingElement(value as number)
+                        }
                         value={numberOfElement}
                         defaultValue={defaultNumberOfNumber}
                         min={minNumberOfElement}
                         max={maxNumberOfElement}
-                        disabled={sortInProgress} />
+                        disabled={sortInProgress}
+                    />
                 </Box>
                 <Box p={1}>
                     <Select
                         disabled={sortInProgress}
-                        onChange={(event) => updateSortingMethod(event.target.value as string)}
+                        onChange={(event) =>
+                            updateSortingMethod(event.target.value as string)
+                        }
                         value={sortingMethod}>
-                        <MenuItem value="insertion">Insertion Sort</MenuItem>
-                        <MenuItem value="merge">Merge Sort</MenuItem>
-                        <MenuItem value="selection">Selection Sort</MenuItem>
-                        <MenuItem value="quick">Quick Sort</MenuItem>
-                        <MenuItem value="bubble">Bubble Sort</MenuItem>
+                        {Object.keys(sortingConfiguraiton).map((method) => (
+                            <MenuItem
+                                value={sortingConfiguraiton[method].value}>
+                                {sortingConfiguraiton[method].name}
+                            </MenuItem>
+                        ))}
                     </Select>
                 </Box>
                 <Box p={1}>
                     <Button
-                        variant="contained"
-                        color="secondary"
+                        variant='contained'
+                        color='secondary'
                         disabled={sortInProgress}
-                        onClick={() => sort()}>Sort</Button>
+                        onClick={() => sort()}>
+                        Sort
+                    </Button>
                 </Box>
             </Box>
         </Box>
